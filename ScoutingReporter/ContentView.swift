@@ -9,13 +9,26 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        ARViewControllerContainer()
+            .edgesIgnoringSafeArea(.all) // 全画面表示
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct ARViewControllerContainer: UIViewControllerRepresentable {
+
+    func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewControllerContainer>) -> UIViewController {
+        let viewController = ARViewController()
+        return viewController
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<ARViewControllerContainer>) {
+    }
+
+    func makeCoordinator() -> ARViewControllerContainer.Coordinator {
+        return Coordinator()
+    }
+
+    class Coordinator {
+
     }
 }

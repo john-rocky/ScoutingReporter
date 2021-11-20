@@ -14,6 +14,9 @@
 		7369EF34273B59B800EBF659 /* ScoutingReporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369EF33273B59B800EBF659 /* ScoutingReporterTests.swift */; };
 		7369EF3E273B59B800EBF659 /* ScoutingReporterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369EF3D273B59B800EBF659 /* ScoutingReporterUITests.swift */; };
 		7369EF40273B59B800EBF659 /* ScoutingReporterUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369EF3F273B59B800EBF659 /* ScoutingReporterUITestsLaunchTests.swift */; };
+		7369EF52273C2F0A00EBF659 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369EF51273C2F0A00EBF659 /* ARViewController.swift */; };
+		7369EF8A273C9CA800EBF659 /* InstagramModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369EF89273C9CA800EBF659 /* InstagramModel.swift */; };
+		7369F03A2748704600EBF659 /* PostItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7369F0392748704300EBF659 /* PostItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +47,9 @@
 		7369EF39273B59B800EBF659 /* ScoutingReporterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScoutingReporterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7369EF3D273B59B800EBF659 /* ScoutingReporterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingReporterUITests.swift; sourceTree = "<group>"; };
 		7369EF3F273B59B800EBF659 /* ScoutingReporterUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoutingReporterUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		7369EF51273C2F0A00EBF659 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
+		7369EF89273C9CA800EBF659 /* InstagramModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstagramModel.swift; sourceTree = "<group>"; };
+		7369F0392748704300EBF659 /* PostItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +102,9 @@
 			children = (
 				7369EF22273B599E00EBF659 /* ScoutingReporterApp.swift */,
 				7369EF24273B599E00EBF659 /* ContentView.swift */,
+				7369EF51273C2F0A00EBF659 /* ARViewController.swift */,
+				7369F0392748704300EBF659 /* PostItem.swift */,
+				7369EF89273C9CA800EBF659 /* InstagramModel.swift */,
 				7369EF26273B59B500EBF659 /* Assets.xcassets */,
 				7369EF28273B59B500EBF659 /* Preview Content */,
 			);
@@ -257,7 +266,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7369EF52273C2F0A00EBF659 /* ARViewController.swift in Sources */,
 				7369EF25273B599E00EBF659 /* ContentView.swift in Sources */,
+				7369F03A2748704600EBF659 /* PostItem.swift in Sources */,
+				7369EF8A273C9CA800EBF659 /* InstagramModel.swift in Sources */,
 				7369EF23273B599E00EBF659 /* ScoutingReporterApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,11 +434,13 @@
 				DEVELOPMENT_TEAM = MFN25KNUGJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -451,11 +465,13 @@
 				DEVELOPMENT_TEAM = MFN25KNUGJ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
