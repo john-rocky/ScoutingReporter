@@ -10,7 +10,7 @@ import UIKit
 import RealityKit
 import ARKit
 import Combine
-
+import AVFoundation
 
 class ARViewController: UIViewController {
     
@@ -28,9 +28,9 @@ class ARViewController: UIViewController {
         
         setupARView()
         
-        self.model.getMedia { imageURLs in
+        self.model.getMedia { imageURLs,postItems  in
             print(imageURLs.count)
-            self.displayPostEntities(imageURLs: imageURLs)
+            self.displayPostEntities(imageURLs: imageURLs, postItems: postItems)
         }
     }
     
@@ -63,7 +63,12 @@ class ARViewController: UIViewController {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tap))
         arView.addGestureRecognizer(tapGesture)
-//        arView.renderOptions.insert(.disableFaceOcclusions)
+        arView.renderOptions.insert(.disableFaceOcclusions)
+        
+        let filter = UIView(frame: view.bounds)
+        filter.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        view.addSubview(filter)
+
     }
     
     // MARK: Gesture
@@ -77,30 +82,116 @@ class ARViewController: UIViewController {
     
     // MARK: Post Entities
     
-    func displayPostEntities(imageURLs urls: [URL]) {
-        generatePostEntities(imageURLs: urls) { [self] in
+    func displayPostEntities(imageURLs urls: [URL], postItems: [PostItem]) {
+        generatePostEntities(imageURLs: urls, postItems: postItems) { [self] in
             radialAnimation(centerOfCircle: [0,0,-1], radius: 0.2, numberOfEntities: postEntities.count)
         }
-        
     }
     
-    func generatePostEntities(imageURLs urls: [URL],completion: @escaping () -> Void) {
-        for index in urls.indices {
+    func generatePostEntities(imageURLs urls: [URL], postItems: [PostItem],completion: @escaping () -> Void) {
+//        for index in urls.indices {
+//            let postPlane = ModelEntity(mesh: .generateBox(size: [0.1,0.1,0.05]))
+//            postPlane.generateCollisionShapes(recursive: true)
+//
+//            let url = urls[index]
+//            if let texture = try? TextureResource.load(contentsOf: url) {
+//                var imageMaterial = UnlitMaterial()
+//                imageMaterial.baseColor = MaterialColorParameter.texture(texture)
+//                postPlane.model?.materials = [imageMaterial]
+//                postEntities.append(postPlane)
+        //            }
+        //            print(postEntities.count)
+        //            completion()
+        //        }
+        let dispatchGroup = DispatchGroup()
+        for index in postItems.indices {
+            dispatchGroup.enter()
             let postPlane = ModelEntity(mesh: .generateBox(size: [0.1,0.1,0.05]))
             postPlane.generateCollisionShapes(recursive: true)
             
-            let url = urls[index]
-            if let texture = try? TextureResource.load(contentsOf: url) {
-                var imageMaterial = UnlitMaterial()
-                imageMaterial.baseColor = MaterialColorParameter.texture(texture)
-                postPlane.model?.materials = [imageMaterial]
-                postEntities.append(postPlane)
+            let postItem = postItems[index]
+            
+            switch postItem.mediaType {
+            case .image:
+                if let url = postItem.localImageURL,let texture = try? TextureResource.load(contentsOf: url) {
+                    var imageMaterial = UnlitMaterial()
+                    imageMaterial.baseColor = MaterialColorParameter.texture(texture)
+                    postPlane.model?.materials = [imageMaterial]
+                    postEntities.append(postPlane)
+                    dispatchGroup.leave()
+                } else{
+                    dispatchGroup.leave()
+                }
+            case .video:
+                if let url = postItem.videoURL {
+                    let asset = AVURLAsset(url: url) // URLからAVAssetを作る
+                    let playerItem = AVPlayerItem(asset: asset) // AVAssetでAVPlayerItemを作る
+                    let player = AVPlayer(playerItem: playerItem)
+                    player.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none;
+                    NotificationCenter.default.addObserver(self,
+                                                           selector: #selector(ARViewController.didPlayToEnd),
+                                                           name: NSNotification.Name("AVPlayerItemDidPlayToEndTimeNotification"),
+                                                           object: player.currentItem)
+                    let videoMaterial = VideoMaterial(avPlayer: player)
+                    postPlane.model?.materials = [videoMaterial]
+                    player.play()
+                    postEntities.append(postPlane)
+                    dispatchGroup.leave()
+                } else {
+                    dispatchGroup.leave()
+                }
+            case .album:
+                if let firstItemOfAlbum = postItem.albumItems.first {
+                    switch firstItemOfAlbum.mediaType {
+                    case .image:
+                        if let url = postItem.localImageURL,let texture = try? TextureResource.load(contentsOf: url) {
+                            var imageMaterial = UnlitMaterial()
+                            imageMaterial.baseColor = MaterialColorParameter.texture(texture)
+                            postPlane.model?.materials = [imageMaterial]
+                            postEntities.append(postPlane)
+                            dispatchGroup.leave()
+                        } else {
+                            dispatchGroup.leave()
+                        }
+                    case .video:
+                        if let url = firstItemOfAlbum.url {
+                            let asset = AVURLAsset(url: url)
+                            let playerItem = AVPlayerItem(asset: asset)
+                            let player = AVPlayer(playerItem: playerItem)
+                            player.actionAtItemEnd = AVPlayer.ActionAtItemEnd.none;
+                            NotificationCenter.default.addObserver(self,
+                                                                   selector: #selector(ARViewController.didPlayToEnd),
+                                                                   name: NSNotification.Name("AVPlayerItemDidPlayToEndTimeNotification"),
+                                                                   object: player.currentItem)
+                            let videoMaterial = VideoMaterial(avPlayer: player)
+                            postPlane.model?.materials = [videoMaterial]
+                            player.play()
+                            postEntities.append(postPlane)
+                            dispatchGroup.leave()
+                        } else {
+                            dispatchGroup.leave()
+                        }
+                    default:break
+                    }
+                } else {
+                    dispatchGroup.leave()
+                }
+            default:
+                dispatchGroup.leave()
             }
+            
             print(postEntities.count)
+        }
+        dispatchGroup.notify(queue: .main){
             completion()
         }
     }
-
+    
+    @objc func didPlayToEnd(notification: NSNotification) {
+        let item: AVPlayerItem = notification.object as! AVPlayerItem
+        item.seek(to: CMTime.zero, completionHandler: nil)
+    }
+    
     func radialAnimation(centerOfCircle:SIMD3<Float>, radius: Float, numberOfEntities: Int) {
         for index in postEntities.indices {
             let postEntity = postEntities[index]
